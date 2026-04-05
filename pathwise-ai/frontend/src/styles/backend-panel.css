@@ -1,0 +1,78 @@
+/* ══════════════════════════════════════════════
+   PathWise AI — backend-panel.css
+   Right column: raw values table + log stream
+   ══════════════════════════════════════════════ */
+
+.backend-panel { flex: 1; display: flex; flex-direction: column; }
+
+.log-top {
+  display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;
+}
+.log-title {
+  font-family: 'Space Mono', monospace; font-size: 8px;
+  letter-spacing: 2px; color: var(--muted); text-transform: uppercase;
+}
+.log-clear {
+  font-family: 'Space Mono', monospace; font-size: 8px; color: var(--muted);
+  background: none; border: 1px solid var(--border); border-radius: 4px;
+  padding: 2px 6px; cursor: pointer;
+}
+.log-clear:hover { color: var(--fiber); border-color: var(--fiber); }
+
+/* ── RAW VALUES TABLE ── */
+.raw-table {
+  width: 100%; font-family: 'Space Mono', monospace; font-size: 9px;
+  border-collapse: collapse; margin-bottom: 8px;
+}
+.raw-table thead tr { border-bottom: 1px solid var(--border); }
+.raw-table th {
+  color: var(--muted); font-weight: 700; text-align: left;
+  padding: 3px 4px 5px; font-size: 7px; letter-spacing: 1px;
+}
+.raw-table td {
+  padding: 2px 4px; border-bottom: 1px solid rgba(26,43,66,0.4);
+  transition: color 0.3s;
+}
+.raw-table td:first-child { color: var(--muted); font-size: 8px; }
+
+.raw-section td {
+  font-size: 7px !important; letter-spacing: 1px;
+  color: rgba(78,104,128,0.55) !important;
+  padding-top: 7px !important; text-transform: uppercase;
+}
+
+/* Value color classes */
+.rv-fiber    { color: var(--fiber) !important; }
+.rv-starlink { color: var(--starlink) !important; }
+.rv-lstm     { color: var(--warn) !important; }
+.rv-ok       { color: var(--ok) !important; }
+.rv-danger   { color: var(--danger) !important; }
+.rv-sys      { color: #7a9ab8 !important; }
+.rv-dim      { color: var(--muted) !important; }
+
+/* ── LOG STREAM ── */
+.log-section-title {
+  font-family: 'Space Mono', monospace; font-size: 7px; letter-spacing: 1.5px;
+  color: var(--muted); text-transform: uppercase;
+  padding: 7px 0 4px; border-top: 1px solid var(--border);
+}
+.log-stream {
+  overflow-y: auto;
+  background: rgba(4,7,14,0.9); border: 1px solid var(--border);
+  border-radius: 7px; padding: 7px 8px;
+  font-family: 'Space Mono', monospace; font-size: 8.5px;
+  line-height: 1.65; max-height: 280px; min-height: 180px;
+}
+.log-stream::-webkit-scrollbar { width: 3px; }
+.log-stream::-webkit-scrollbar-track { background: transparent; }
+.log-stream::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+/* Log line levels */
+.ll         { margin: 0; padding: 0; white-space: pre-wrap; word-break: break-all; }
+.ll.info    { color: #3d7a8a; }
+.ll.warn    { color: var(--warn); }
+.ll.alert   { color: var(--danger); }
+.ll.success { color: var(--ok); }
+.ll.switch  { color: var(--starlink); }
+.ll.system  { color: #2a4a5e; }
+.ll.data    { color: #285f70; }

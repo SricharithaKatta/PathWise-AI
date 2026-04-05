@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PathWise AI — Live Network Demo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="src/styles/main.css" />
+  <link rel="stylesheet" href="src/styles/components.css" />
+  <link rel="stylesheet" href="src/styles/backend-panel.css" />
+</head>
+<body>
+
+  <!-- ── IDLE SCREEN ── -->
+  <div id="idle">
+    <div class="idle-title">Path<em>Wise</em> AI</div>
+    <div class="idle-sub">Predictive SD-WAN · Fully Autonomous · Fiber→Starlink Hitless Handoff · Zero Packet Loss</div>
+    <div class="idle-badge">
+      📡 <strong>Real-world data baselines:</strong> FCC Measuring Broadband America 2023 ·
+      SpaceX Starlink 2022-23 · ITU-T G.114 · OpenSignal 2023<br/>
+      🤖 Fully autonomous: auto-degradation at T+15s · LSTM alert at 85% · Auto-switch at 92%
+    </div>
+    <div class="data-stream" id="stream-txt">initializing telemetry engine...</div>
+    <button class="btn-launch" onclick="App.launch()">▶ LAUNCH DEMO</button>
+  </div>
+
+  <!-- ── MAIN APP ── -->
+  <div class="z1 wrap">
+    <header>
+      <div class="logo">
+        <div class="logo-icon">⚡</div>
+        <div>
+          <h1>Path<em>Wise</em> AI</h1>
+          <p>SD-WAN Predictive Intelligence · Team Pathfinders 2026</p>
+        </div>
+      </div>
+      <div class="hdr-right">
+        <div class="live-pill"><div class="live-dot"></div>LIVE TELEMETRY</div>
+        <div class="clock" id="clock">T+00:00</div>
+      </div>
+    </header>
+
+    <div class="main-grid">
+
+      <!-- ══ LEFT COL ══ -->
+      <div class="col" id="col-left">
+
+        <!-- Controls -->
+        <div class="card">
+          <div class="clabel">Demo Controls</div>
+          <div class="ctrls">
+            <button class="btn btn-p" id="btn-start" onclick="App.startDemo()">▶ Start Demo</button>
+            <button class="btn btn-g" onclick="App.resetDemo()">↺ Reset</button>
+            <span class="phase-tag" id="ptag">READY</span>
+            <span id="auto-note" class="auto-note">Auto-degradation fires at T+15s</span>
+          </div>
+          <!-- Countdown bar -->
+          <div class="auto-bar" id="auto-bar" style="display:none">
+            <div class="auto-bar-lbl">
+              <span id="auto-lbl">⏱ Auto-degradation countdown</span>
+              <span id="auto-sec" class="warn-text">15s</span>
+            </div>
+            <div class="auto-track"><div class="auto-fill" id="auto-fill" style="width:0%"></div></div>
+            <div class="cd-num warn-text" id="cdnum">15</div>
+          </div>
+        </div>
+
+        <!-- Phase Banner -->
+        <div class="banner ok" id="banner">
+          <div class="ban-icon" id="ban-icon">🟢</div>
+          <div>
+            <div class="ban-title" id="ban-title">All Links Stable — PathWise AI Monitoring</div>
+            <div class="ban-sub" id="ban-sub">Waiting to start · Fully autonomous mode</div>
+          </div>
+        </div>
+
+        <!-- Link Status -->
+        <div class="card">
+          <div class="clabel">WAN Link Status</div>
+          <div class="links-grid">
+            <!-- Fiber -->
+            <div class="lcard f-active" id="fc">
+              <div class="link-name">
+                <div class="ldot fd"></div>Fiber FTTH
+                <span class="lbadge fiber-badge" id="fb">ACTIVE</span>
+              </div>
+              <div class="lm-grid">
+                <div class="lm"><div class="lm-val fiber-text" id="f-lat">—</div><div class="lm-lbl">Latency ms</div></div>
+                <div class="lm"><div class="lm-val fiber-text" id="f-loss">—</div><div class="lm-lbl">Loss %</div></div>
+                <div class="lm"><div class="lm-val fiber-text" id="f-jit">—</div><div class="lm-lbl">Jitter ms</div></div>
+              </div>
+            </div>
+            <div class="arrow-mid" id="arrow">→</div>
+            <!-- Starlink -->
+            <div class="lcard dim" id="sc">
+              <div class="link-name">
+                <div class="ldot sd"></div>Starlink
+                <span class="lbadge starlink-badge" id="sb">STANDBY</span>
+              </div>
+              <div class="lm-grid">
+                <div class="lm"><div class="lm-val starlink-text" id="s-lat">—</div><div class="lm-lbl">Latency ms</div></div>
+                <div class="lm"><div class="lm-val starlink-text" id="s-loss">—</div><div class="lm-lbl">Loss %</div></div>
+                <div class="lm"><div class="lm-val starlink-text" id="s-jit">—</div><div class="lm-lbl">Jitter ms</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Chart -->
+        <div class="card">
+          <div class="clabel">Real-Time Latency & Packet Loss Telemetry</div>
+          <canvas id="chart" height="108"></canvas>
+          <div class="chart-legend">
+            <div class="leg"><div class="leg-line fiber-bg"></div>Fiber Latency</div>
+            <div class="leg"><div class="leg-line starlink-bg"></div>Starlink Latency</div>
+            <div class="leg"><div class="leg-line danger-bg" style="opacity:.7"></div>Fiber Loss %</div>
+          </div>
+        </div>
+
+        <!-- VS + Video -->
+        <div class="card">
+          <div class="clabel">PathWise AI vs Traditional SD-WAN</div>
+          <div class="vs-grid">
+            <div class="vs-box bad">
+              <div class="vs-head r">❌ Without PathWise</div>
+              <div class="vs-row2">⏳ Reacts after packets drop</div>
+              <div class="vs-row2">📦 Packet loss in switch gap</div>
+              <div class="vs-row2">📞 VoIP drops / freezes</div>
+              <div class="vs-row2">⏱ 2–8s switchover delay</div>
+              <div class="vs-status danger-text" id="wbuf">● BUFFERING</div>
+            </div>
+            <div class="vs-box good">
+              <div class="vs-head g">✅ With PathWise AI</div>
+              <div class="vs-row2">🔮 Predicts 30–60s ahead</div>
+              <div class="vs-row2">✈ Hitless — zero loss</div>
+              <div class="vs-row2">📞 VoIP uninterrupted</div>
+              <div class="vs-row2">⚡ &lt;50ms LSTM switch</div>
+              <div class="vs-status ok-text" id="wgood">● SEAMLESS</div>
+            </div>
+          </div>
+          <div class="vidbox">
+            <div class="vid-lbl">VoIP / Video Stream (live simulation)</div>
+            <div class="voip-row" id="voip"></div>
+            <div class="vid-buf"><div class="vid-fill" id="vfill" style="width:80%"></div></div>
+            <div class="vid-status ok" id="vstat">▶ Streaming — No Interruption</div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ══ MIDDLE COL ══ -->
+      <div class="col" id="col-mid">
+
+        <!-- LSTM Engine -->
+        <div class="card">
+          <div class="clabel">LSTM Prediction Engine</div>
+          <div class="conf-row">
+            <div class="conf-num" id="conf">0.0</div>
+            <div class="conf-unit">% confidence</div>
+          </div>
+          <div class="conf-track"><div class="conf-fill" id="cfill" style="width:0%"></div></div>
+          <div class="conf-marks"><span>Safe</span><span>Alert 85%</span><span>Switch 92%</span></div>
+          <table class="pred-tbl">
+            <tr><td>Architecture</td><td>LSTM seq2seq</td></tr>
+            <tr><td>Input window</td><td>30 samples · 500ms</td></tr>
+            <tr><td>Predict ahead</td><td id="phorizon">—</td></tr>
+            <tr><td>Features</td><td>lat · jit · loss</td></tr>
+            <tr><td>Target accuracy</td><td class="ok-text">≥ 90% MSE</td></tr>
+            <tr id="alert-row" style="display:none"><td>🚨 STATUS</td><td class="danger-text">Brownout predicted</td></tr>
+          </table>
+        </div>
+
+        <!-- Health Scoreboard -->
+        <div class="card">
+          <div class="clabel">Multi-Link Health Scoreboard</div>
+          <div class="hs-grid">
+            <div class="hs-item">
+              <div class="hs-head"><div class="ldot fd" style="width:5px;height:5px"></div>Fiber FTTH</div>
+              <div class="hs-val fiber-text" id="hf">—</div>
+              <div class="hs-track"><div class="hs-fill2" id="hfb" style="width:0%;background:var(--fiber)"></div></div>
+            </div>
+            <div class="hs-item">
+              <div class="hs-head"><div class="ldot sd" style="width:5px;height:5px"></div>Starlink</div>
+              <div class="hs-val starlink-text" id="hs2">—</div>
+              <div class="hs-track"><div class="hs-fill2" id="hsb" style="width:0%;background:var(--starlink)"></div></div>
+            </div>
+          </div>
+          <div class="stat-grid">
+            <div>Active Link</div><div id="al" class="fiber-text">Fiber FTTH</div>
+            <div>Link Switches</div><div id="sw-cnt">0</div>
+            <div>Pkts Loss Avoided</div><div id="pkt-saved" class="ok-text">0</div>
+            <div>Service Uptime</div><div id="uptime" class="ok-text">100%</div>
+          </div>
+        </div>
+
+        <!-- Timeline -->
+        <div class="card">
+          <div class="clabel">Event Timeline</div>
+          <div class="tl-row on" id="tl1"><div class="tl-time" id="tt1">T+00:00</div><div class="tl-body"><strong>Demo Started</strong>Both links online, LSTM armed</div></div>
+          <div class="tl-row" id="tl2"><div class="tl-time" id="tt2">—</div><div class="tl-body"><strong>Auto-Degradation Fired</strong>Fiber congestion event begins</div></div>
+          <div class="tl-row" id="tl3"><div class="tl-time" id="tt3">—</div><div class="tl-body warn-text"><strong>⚠ PathWise Alert (85%)</strong>"Brownout imminent — preparing switch"</div></div>
+          <div class="tl-row" id="tl4"><div class="tl-time" id="tt4">—</div><div class="tl-body starlink-text"><strong>⚡ Hitless Switch Executed</strong>SDN reroutes to Starlink · 0 pkts dropped</div></div>
+          <div class="tl-row" id="tl5"><div class="tl-time" id="tt5">—</div><div class="tl-body ok-text"><strong>✅ Stable on Starlink</strong>VoIP/video uninterrupted · users unaffected</div></div>
+        </div>
+
+        <!-- IBN -->
+        <div class="card">
+          <div class="clabel">Intent-Based Interface (IBN)</div>
+          <div class="ibn-list">
+            <div class="ibn-item">"Prioritize VoIP over all WAN links"</div>
+            <div class="ibn-item">"Alert if fiber latency &gt; 80ms"</div>
+            <div class="ibn-item" id="ibn-auto">"Auto: switch if LSTM confidence &gt; 92%"</div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ══ RIGHT COL — BACKEND PANEL ══ -->
+      <div class="col" id="col-right">
+        <div class="card backend-panel">
+          <div class="log-top">
+            <span class="log-title">⚙ Backend Engine · All Raw Values</span>
+            <button class="log-clear" onclick="BackendPanel.clearLog()">CLEAR LOG</button>
+          </div>
+
+          <!-- Raw Values Table -->
+          <div id="raw-values-container"></div>
+
+          <!-- Log Stream -->
+          <div class="log-section-title">System Log — Backend Events</div>
+          <div class="log-stream" id="log-stream"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="src/utils/helpers.js"></script>
+  <script src="src/utils/chart.js"></script>
+  <script src="src/utils/voip.js"></script>
+  <script src="src/components/BackendPanel.js"></script>
+  <script src="src/components/LinkCards.js"></script>
+  <script src="src/components/Banner.js"></script>
+  <script src="src/components/Timeline.js"></script>
+  <script src="src/components/LSTM.js"></script>
+  <script src="src/app.js"></script>
+</body>
+</html>
